@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Ghost Sandbox Browser",
+  "version": "1.2",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "icons": {
+    "16": "icons/Hexagon-16.png",
+    "48": "icons/Hexagon-48.png",
+    "128": "icons/Hexagon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["bypass.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["design.js", "content.js"],
+      "world": "ISOLATED"
+    }
+  ]
+}
