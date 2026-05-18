@@ -1,5 +1,15 @@
 // bypass.js
 (function() {
+  // Spoof iframe detection so embedded sites behave as if top-level
+  try {
+    Object.defineProperty(window, 'top',         { get: function() { return window; }, configurable: true });
+    Object.defineProperty(window, 'parent',      { get: function() { return window; }, configurable: true });
+    Object.defineProperty(window, 'frameElement',{ get: function() { return null;   }, configurable: true });
+    if (location.ancestorOrigins && location.ancestorOrigins.length > 0) {
+      Object.defineProperty(document, 'referrer', { get: function() { return ''; }, configurable: true });
+    }
+  } catch(e) {}
+
   const originalAddEventListener = window.addEventListener;
 
   window.addEventListener = function(type, listener, options) {
