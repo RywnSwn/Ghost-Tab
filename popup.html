@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #0a0a0f;
+      color: #e0e0f0;
+      margin: 0;
+      padding: 16px;
+      width: 280px;
+    }
+    h3 {
+      color: #e0e0f0;
+      margin-top: 0;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #1e1e2e;
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-list {
+      padding-left: 20px;
+      margin: 0 0 16px 0;
+    }
+    .step-list li {
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .badge {
+      background: #1a1a24;
+      border: 1px solid #2e2e3e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #00ff88;
+    }
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888899;
+      margin-bottom: 8px;
+    }
+    .keybind-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-top: 1px solid #1e1e2e;
+      padding-top: 12px;
+    }
+    .keybind-display {
+      flex: 1;
+      background: #1a1a24;
+      border: 1px solid #2e2e3e;
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #00ff88;
+      text-align: center;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .keybind-display.capturing {
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #888899;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { border-color: rgba(255, 255, 255, 0.15); }
+      50%       { border-color: rgba(255, 255, 255, 0.5); }
+    }
+    .set-btn {
+      background: #1a1a24;
+      border: 1px solid #2e2e3e;
+      color: #e0e0f0;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .set-btn:hover {
+      background: #22223a;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .set-btn.cancel {
+      color: #ff5555;
+      border-color: rgba(255, 85, 85, 0.3);
+    }
+    .footer-note {
+      font-size: 11px;
+      color: #888899;
+      text-align: center;
+      border-top: 1px solid #1e1e2e;
+      padding-top: 8px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h3>🌐 How It Works</h3>
+
+  <ol class="step-list">
+    <li>Look for the slim bookmark tab on the right edge of any website you visit.</li>
+    <li>Click the button to slide open the side-panel browser window.</li>
+    <li>Type a URL or search term in the input bar and press <span class="badge">Enter</span>.</li>
+    <li>To hide it instantly, click <span class="badge">&times;</span> or <strong>double-click</strong> anywhere on the page.</li>
+  </ol>
+
+  <p class="section-title">Toggle Keybind</p>
+  <div class="keybind-row">
+    <div class="keybind-display" id="keybindDisplay">—</div>
+    <button class="set-btn" id="setBtn">Set</button>
+  </div>
+
+  <p class="footer-note">Ghost Sandbox Browser &bull; Active &amp; Ready</p>
+
+  <script src="popup.js"></script>
+</body>
+</html>
