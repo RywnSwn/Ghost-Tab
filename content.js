@@ -7,15 +7,50 @@
   if (!window.__createGhostBrowserUI) return;
   const ui = window.__createGhostBrowserUI();
 
+  // Manual history stack (cross-origin iframes block contentWindow.history)
+  const navHistory = [ui.viewArea.src];
+  let navIndex = 0;
+
+  function navigateTo(url, pushToHistory = true) {
+    if (pushToHistory) {
+      navHistory.splice(navIndex + 1);
+      navHistory.push(url);
+      navIndex = navHistory.length - 1;
+    }
+    ui.viewArea.src = url;
+    ui.input.value = url;
+  }
+
   // Event Listeners for UI interaction
   ui.btn.addEventListener('click', (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     ui.setBrowserVisibility(true);
   });
 
   ui.closeBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     ui.setBrowserVisibility(false);
+  });
+
+  ui.backBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (navIndex > 0) {
+      navIndex--;
+      navigateTo(navHistory[navIndex], false);
+    }
+  });
+
+  ui.forwardBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (navIndex < navHistory.length - 1) {
+      navIndex++;
+      navigateTo(navHistory[navIndex], false);
+    }
+  });
+
+  ui.refreshBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    ui.viewArea.src = ui.viewArea.src;
   });
 
   ui.container.addEventListener('mouseleave', (e) => e.stopPropagation());
@@ -35,6 +70,32 @@
   });
   // -----------------------------------------------------------------------
 
+  // Global keybind toggle
+  let currentKeybind = null;
+  chrome.storage.sync.get('ghostKeybind', ({ ghostKeybind }) => {
+    currentKeybind = ghostKeybind || null;
+  });
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.ghostKeybind) currentKeybind = changes.ghostKeybind.newValue;
+  });
+  window.addEventListener('keydown', (e) => {
+    const kb = currentKeybind;
+    if (!kb || !kb.key) return;
+    const host = document.getElementById('ghost-browser-shield-host');
+    if (host && host.shadowRoot && host.shadowRoot.contains(e.target)) return;
+    if (
+      e.key === kb.key &&
+      e.ctrlKey  === !!kb.ctrl &&
+      e.altKey   === !!kb.alt &&
+      e.shiftKey === !!kb.shift &&
+      e.metaKey  === !!kb.meta
+    ) {
+      e.preventDefault();
+      const isOpen = host && host.getAttribute('data-open') === 'true';
+      ui.setBrowserVisibility(!isOpen);
+    }
+  }, true);
+
   ui.input.addEventListener('keydown', (e) => {
     e.stopPropagation(); 
     if (e.key === 'Enter') {
@@ -46,7 +107,7 @@
       } else if (!/^https?:\/\//i.test(target)) {
         target = 'https://www.google.com/search?q=' + encodeURIComponent(target) + '&igu=1';
       }
-      ui.viewArea.src = target;
+      navigateTo(target);
     }
   });
 })();

@@ -72,7 +72,7 @@
       
       .browser-container {
         position: fixed;
-        right: -460px;
+        right: -100%;
         top: 0;
         width: 420px;
         height: 100vh;
@@ -84,6 +84,24 @@
         flex-direction: column;
       }
       .browser-container.open { right: 0; }
+      .browser-container.closing { transition: right 0.15s ease-in; }
+      .browser-container.resizing { transition: none; user-select: none; }
+
+      .resize-handle {
+        position: absolute;
+        left: -4px;
+        top: 0;
+        width: 8px;
+        height: 100%;
+        cursor: ew-resize;
+        z-index: 10;
+        background: transparent;
+        transition: background 0.2s;
+      }
+      .resize-handle:hover,
+      .resize-handle.dragging {
+        background: rgba(255, 255, 255, 0.08);
+      }
       
       .browser-header {
         padding: 12px;
@@ -106,6 +124,20 @@
       }
       .url-input:focus { border-color: rgba(255, 255, 255, 0.4); }
       
+      .nav-btn {
+        background: transparent;
+        border: none;
+        color: #888899;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 4px 6px;
+        transition: color 0.2s;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .nav-btn:hover { color: #e0e0f0; }
+      .nav-btn:disabled { color: #333344; cursor: default; }
+
       .close-btn {
         background: transparent;
         border: none;
@@ -148,6 +180,24 @@
     closeBtn.className = 'close-btn';
     closeBtn.innerHTML = '&times;';
     
+    const backBtn = document.createElement('button');
+    backBtn.className = 'nav-btn';
+    backBtn.title = 'Go back';
+    backBtn.innerHTML = '&#8592;';
+
+    const forwardBtn = document.createElement('button');
+    forwardBtn.className = 'nav-btn';
+    forwardBtn.title = 'Go forward';
+    forwardBtn.innerHTML = '&#8594;';
+
+    const refreshBtn = document.createElement('button');
+    refreshBtn.className = 'nav-btn';
+    refreshBtn.title = 'Refresh';
+    refreshBtn.innerHTML = '&#8635;';
+
+    header.appendChild(backBtn);
+    header.appendChild(forwardBtn);
+    header.appendChild(refreshBtn);
     header.appendChild(input);
     header.appendChild(closeBtn);
     container.appendChild(header);
@@ -159,23 +209,71 @@
     
     shadow.appendChild(container);
 
+    // Resize handle
+    const resizeHandle = document.createElement('div');
+    resizeHandle.className = 'resize-handle';
+    container.appendChild(resizeHandle);
+
+    const MIN_W = 240;
+    const MAX_W = Math.round(window.screen.width * 0.9);
+    let panelWidth = parseInt(localStorage.getItem('ghostBrowserWidth') || '420', 10);
+
+    function applyWidth(w) {
+      panelWidth = Math.min(MAX_W, Math.max(MIN_W, w));
+      container.style.width = panelWidth + 'px';
+      if (host.getAttribute('data-open') === 'true') {
+        host.style.width = panelWidth + 'px';
+      }
+    }
+
+    applyWidth(panelWidth);
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      resizeHandle.classList.add('dragging');
+      container.classList.add('resizing');
+      const startX = e.clientX;
+      const startW = panelWidth;
+
+      function onMove(e) {
+        applyWidth(startW + (startX - e.clientX));
+      }
+      function onUp() {
+        resizeHandle.classList.remove('dragging');
+        container.classList.remove('resizing');
+        localStorage.setItem('ghostBrowserWidth', panelWidth);
+        document.removeEventListener('mousemove', onMove, true);
+        document.removeEventListener('mouseup', onUp, true);
+      }
+      document.addEventListener('mousemove', onMove, true);
+      document.addEventListener('mouseup', onUp, true);
+    });
+
     function setBrowserVisibility(visible) {
       if (visible) {
         container.classList.add('open');
         btn.classList.add('hidden');
         host.setAttribute('data-open', 'true');
-        host.style.width = '420px'; // Expand host container area so interactions work
+        host.style.width = panelWidth + 'px';
       } else {
+        container.classList.add('closing');
         container.classList.remove('open');
         btn.classList.remove('hidden');
         host.setAttribute('data-open', 'false');
-        host.style.width = '0'; // Shrink host container back so it doesn't block page elements
+        setTimeout(() => {
+          container.classList.remove('closing');
+          host.style.width = '0';
+        }, 150);
       }
     }
 
     return {
       btn,
       closeBtn,
+      backBtn,
+      forwardBtn,
+      refreshBtn,
       container,
       input,
       viewArea,
