@@ -93,6 +93,71 @@
       color: #ff5555;
       border-color: rgba(255, 85, 85, 0.3);
     }
+    .description {
+      font-size: 12px;
+      color: #888899;
+      line-height: 1.5;
+      margin: 0 0 14px 0;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid #1e1e2e;
+      padding-top: 12px;
+      margin-bottom: 12px;
+    }
+    .toggle-label {
+      font-size: 13px;
+      color: #e0e0f0;
+    }
+    .toggle-label small {
+      display: block;
+      font-size: 11px;
+      color: #888899;
+      margin-top: 2px;
+    }
+    .switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #1a1a24;
+      border: 1px solid #2e2e3e;
+      border-radius: 22px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 3px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #555566;
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .switch input:checked + .slider {
+      background: rgba(0, 255, 136, 0.15);
+      border-color: rgba(0, 255, 136, 0.4);
+    }
+    .switch input:checked + .slider::before {
+      transform: translateY(-50%) translateX(18px);
+      background: #00ff88;
+    }
     .footer-note {
       font-size: 11px;
       color: #888899;
@@ -105,8 +170,22 @@
 </head>
 <body>
 
-  <h3>🌐 How It Works</h3>
+  <h3>🌐 Ghost Tab</h3>
 
+  <p class="description">A hidden side-panel browser that slides into any webpage. Browse, search, or reference content without ever leaving your current tab.</p>
+
+  <div class="toggle-row">
+    <div class="toggle-label">
+      Show side tab
+      <small>Display the trigger on page edges</small>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="enabledToggle" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <p class="section-title">How It Works</p>
   <ol class="step-list">
     <li>Look for the slim bookmark tab on the right edge of any website you visit.</li>
     <li>Click the button to slide open the side-panel browser window.</li>

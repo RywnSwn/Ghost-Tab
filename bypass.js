@@ -30,6 +30,6 @@
       return originalAddEventListener.call(this, type, secureListener, options);
     }
     
-    return originalAddEventListener.apply(this, arguments);
+    try { return originalAddEventListener.apply(this, arguments); } catch(e) {}
   };
 })();

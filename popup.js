@@ -1,5 +1,13 @@
 const display = document.getElementById('keybindDisplay');
 const setBtn = document.getElementById('setBtn');
+const enabledToggle = document.getElementById('enabledToggle');
+
+chrome.storage.sync.get('ghostEnabled', ({ ghostEnabled }) => {
+  enabledToggle.checked = ghostEnabled !== false;
+});
+enabledToggle.addEventListener('change', () => {
+  chrome.storage.sync.set({ ghostEnabled: enabledToggle.checked });
+});
 
 let capturing = false;
 

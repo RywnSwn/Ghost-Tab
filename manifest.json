@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Ghost Sandbox Browser",
+  "description": "A hidden side-panel browser that slides into any webpage. Browse, search, or reference content without leaving your current tab.",
   "version": "1.2",
   "permissions": [
     "activeTab",
