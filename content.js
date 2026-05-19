@@ -142,6 +142,22 @@
     ui.setBrowserVisibility(false);
   });
 
+  // Enabled toggle
+  chrome.storage.sync.get('ghostEnabled', ({ ghostEnabled }) => {
+    if (ghostEnabled === false) ui.btn.classList.add('hidden');
+  });
+  chrome.storage.onChanged.addListener((changes) => {
+    if (changes.ghostEnabled) {
+      const on = changes.ghostEnabled.newValue !== false;
+      if (on) {
+        ui.btn.classList.remove('hidden');
+      } else {
+        ui.btn.classList.add('hidden');
+        ui.setBrowserVisibility(false);
+      }
+    }
+  });
+
   // Global keybind toggle
   let currentKeybind = null;
   chrome.storage.sync.get('ghostKeybind', ({ ghostKeybind }) => {
