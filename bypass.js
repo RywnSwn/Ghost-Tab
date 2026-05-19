@@ -15,13 +15,8 @@
   window.addEventListener = function(type, listener, options) {
     if (type === 'blur') {
       const secureListener = function(event) {
-        // If the tab is actually hidden/closed, always let blur through
-        if (document.hidden) {
-          return listener.apply(this, arguments);
-        }
-
         const host = document.getElementById('ghost-browser-shield-host');
-
+        
         // If host exists, check its internal configuration state safely via shadowRoot
         if (host) {
           const isOpen = host.getAttribute('data-open') === 'true';
@@ -29,12 +24,12 @@
             return; // Kill the blur event!
           }
         }
-
+        
         return listener.apply(this, arguments);
       };
       return originalAddEventListener.call(this, type, secureListener, options);
     }
     
-    return originalAddEventListener.apply(this, arguments);
+    try { return originalAddEventListener.apply(this, arguments); } catch(e) {}
   };
 })();
