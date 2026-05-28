@@ -16,55 +16,51 @@
 
     const style = document.createElement('style');
     style.textContent = `
+      .tab-track { display: none; }
+
       .toggle-btn {
         position: fixed;
         right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 22px;
-        height: 72px;
-        background: rgba(18, 18, 18, 0.92);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: 38px;
+        height: 44px;
+        background: rgba(80, 80, 80, 0.25);
+        border: 1px solid rgba(120, 120, 120, 0.2);
         border-right: none;
-        border-radius: 8px 0 0 8px;
-        cursor: pointer;
-        opacity: 0.6;
-        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 18px 0 0 18px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        cursor: grab;
+        opacity: 1;
+        transition: box-shadow 0.22s, background 0.22s;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 5px;
-        backdrop-filter: blur(6px);
-        box-shadow: -3px 0 16px rgba(0, 0, 0, 0.4);
+        box-shadow: -3px 2px 10px rgba(0,0,0,0.35);
         padding: 0;
+        z-index: 2147483647;
+        user-select: none;
+        -webkit-user-drag: none;
       }
-      .toggle-btn::before,
-      .toggle-btn::after,
-      .toggle-btn .dot-mid {
-        content: '';
-        display: block;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.35);
-        transition: background 0.2s;
+      .toggle-btn img {
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-drag: none;
       }
       .toggle-btn:hover {
-        opacity: 1;
-        width: 26px;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
-        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(80, 80, 80, 0.4);
+        box-shadow: -5px 2px 14px rgba(0,0,0,0.45);
       }
-      .toggle-btn:hover::before,
-      .toggle-btn:hover::after,
-      .toggle-btn:hover .dot-mid {
-        background: rgba(255, 255, 255, 0.85);
+      .toggle-btn.dragging {
+        cursor: grabbing;
+        transition: none;
       }
       .toggle-btn.hidden {
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-50%) translateX(100%);
+        transform: translateX(50px);
+        transition: opacity 0.2s, transform 0.22s cubic-bezier(0.16,1,0.3,1);
       }
 
       .browser-container {
@@ -252,12 +248,58 @@
     `;
     shadow.appendChild(style);
 
+    const track = document.createElement('div');
+    track.className = 'tab-track';
+    shadow.appendChild(track);
+
     const btn = document.createElement('button');
     btn.className = 'toggle-btn';
-    const dotMid = document.createElement('span');
-    dotMid.className = 'dot-mid';
-    btn.appendChild(dotMid);
+    const btnIcon = document.createElement('img');
+    btnIcon.src = chrome.runtime.getURL('icons/Hexagon-48.png');
+    btnIcon.alt = '';
+    btn.appendChild(btnIcon);
     shadow.appendChild(btn);
+
+    // Draggable vertical position
+    const SAVED_TOP_KEY = 'ghostBrowserBtnTop';
+    function clampTop(y) {
+      return Math.max(8, Math.min(window.innerHeight - 52, y));
+    }
+    function applyBtnTop(y) {
+      const t = clampTop(y) + 'px';
+      btn.style.top = t;
+      track.style.top = t;
+    }
+    const savedTop = parseFloat(localStorage.getItem(SAVED_TOP_KEY));
+    applyBtnTop(isNaN(savedTop) ? Math.round(window.innerHeight / 2 - 22) : savedTop);
+
+    let dragState = null;
+    btn.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      e.stopPropagation();
+      dragState = { startY: e.clientY, startTop: parseFloat(btn.style.top) };
+      btn.classList.add('dragging');
+
+      function onMove(e) {
+        if (!dragState) return;
+        const newTop = clampTop(dragState.startTop + (e.clientY - dragState.startY));
+        btn.style.top = newTop + 'px';
+      }
+      function onUp(e) {
+        if (!dragState) return;
+        const delta = Math.abs(e.clientY - dragState.startY);
+        btn.classList.remove('dragging');
+        localStorage.setItem(SAVED_TOP_KEY, parseFloat(btn.style.top));
+        dragState = null;
+        document.removeEventListener('mousemove', onMove, true);
+        document.removeEventListener('mouseup', onUp, true);
+        // Only open browser if it was a click (not a drag)
+        if (delta < 5) btn.dispatchEvent(new CustomEvent('ghost-click'));
+      }
+      document.addEventListener('mousemove', onMove, true);
+      document.addEventListener('mouseup', onUp, true);
+    });
 
     const container = document.createElement('div');
     container.className = 'browser-container';

@@ -93,8 +93,7 @@
   createTab();
 
   // --- UI event listeners ---
-  ui.btn.addEventListener('click', (e) => {
-    e.stopPropagation();
+  ui.btn.addEventListener('ghost-click', (e) => {
     ui.setBrowserVisibility(true);
   });
 
