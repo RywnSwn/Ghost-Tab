@@ -183,6 +183,19 @@
     }
   }, true);
 
+  // Select the whole URL on first click, like a real address bar
+  let inputJustFocused = false;
+  ui.input.addEventListener('mousedown', () => {
+    inputJustFocused = document.activeElement !== ui.input;
+  });
+  ui.input.addEventListener('mouseup', (e) => {
+    if (inputJustFocused) {
+      e.preventDefault();
+      ui.input.select();
+    }
+  });
+  ui.input.addEventListener('focus', () => ui.input.select());
+
   ui.input.addEventListener('keydown', (e) => {
     e.stopPropagation();
     if (e.key === 'Enter') {

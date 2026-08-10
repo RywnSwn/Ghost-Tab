@@ -20,94 +20,125 @@
 
       .toggle-btn {
         position: fixed;
-        right: 0;
-        width: 40px;
-        height: 46px;
-        background: linear-gradient(160deg, rgba(99,102,241,0.35), rgba(67,56,202,0.35));
-        border: 1px solid rgba(129, 140, 248, 0.35);
-        border-right: none;
-        border-radius: 20px 0 0 20px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        right: 6px;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(155deg, #818cf8, #4f46e5);
+        border: none;
+        border-radius: 16px;
         cursor: grab;
         opacity: 1;
-        transition: box-shadow 0.22s, background 0.22s;
+        transition: box-shadow 0.22s, transform 0.22s;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: -3px 2px 12px rgba(30, 27, 75, 0.45);
+        box-shadow: 0 6px 18px rgba(30, 27, 75, 0.55), 0 0 0 1px rgba(255,255,255,0.08) inset;
         padding: 0;
         z-index: 2147483647;
         user-select: none;
         -webkit-user-drag: none;
       }
       .toggle-btn img {
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
         pointer-events: none;
         user-select: none;
         -webkit-user-drag: none;
       }
       .toggle-btn:hover {
-        background: linear-gradient(160deg, rgba(99,102,241,0.55), rgba(67,56,202,0.55));
-        box-shadow: -5px 2px 16px rgba(30, 27, 75, 0.55);
+        transform: scale(1.07) translateX(-2px);
+        box-shadow: 0 8px 22px rgba(30, 27, 75, 0.65), 0 0 0 1px rgba(255,255,255,0.12) inset;
       }
       .toggle-btn.dragging {
         cursor: grabbing;
         transition: none;
+        transform: none;
       }
       .toggle-btn.hidden {
         opacity: 0;
         pointer-events: none;
-        transform: translateX(50px);
+        transform: translateX(60px);
         transition: opacity 0.2s, transform 0.22s cubic-bezier(0.16,1,0.3,1);
       }
 
       .browser-container {
         position: fixed;
         right: -100%;
-        top: 0;
+        top: 10px;
+        bottom: 10px;
         width: 420px;
-        height: 100vh;
-        background: #111017;
-        border-left: 1px solid #262233;
-        border-radius: 14px 0 0 14px;
+        height: auto;
+        background: #131019;
+        border: 1px solid #2a2440;
+        border-radius: 18px;
         overflow: hidden;
-        box-shadow: -12px 0 34px rgba(10, 8, 20, 0.65);
-        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: -18px 0 40px rgba(8, 6, 18, 0.6);
+        transition: right 0.32s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
       }
-      .browser-container.open { right: 0; }
-      .browser-container.closing { transition: right 0.15s ease-in; }
+      .browser-container.open { right: 10px; }
+      .browser-container.closing { transition: right 0.18s ease-in; }
       .browser-container.resizing { transition: none; user-select: none; }
 
       .resize-handle {
         position: absolute;
-        left: -4px;
+        left: -6px;
         top: 0;
-        width: 8px;
+        width: 12px;
         height: 100%;
         cursor: ew-resize;
         z-index: 10;
         background: transparent;
-        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      .resize-handle:hover,
-      .resize-handle.dragging {
-        background: rgba(129, 140, 248, 0.18);
+      .resize-handle::after {
+        content: '';
+        width: 3px;
+        height: 34px;
+        border-radius: 3px;
+        background: #35304a;
+        transition: background 0.2s, height 0.2s;
+      }
+      .resize-handle:hover::after,
+      .resize-handle.dragging::after {
+        background: #818cf8;
+        height: 54px;
+      }
+
+      .brand-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 8px 10px 14px;
+        background: linear-gradient(135deg, #4f46e5, #6d28d9);
+        flex-shrink: 0;
+      }
+      .brand-icon {
+        width: 18px;
+        height: 18px;
+        border-radius: 5px;
+        flex-shrink: 0;
+      }
+      .brand-name {
+        flex: 1;
+        font: 600 12.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0.02em;
+        color: #f2f0ff;
       }
 
       .tab-bar {
         display: flex;
-        align-items: flex-end;
-        background: #15131d;
-        border-bottom: 1px solid #262233;
-        padding: 8px 8px 0;
-        gap: 3px;
+        align-items: center;
+        background: #16131f;
+        border-bottom: 1px solid #241f36;
+        padding: 6px 6px;
+        gap: 4px;
         overflow-x: auto;
         scrollbar-width: none;
-        min-height: 36px;
+        min-height: 32px;
         flex-shrink: 0;
       }
       .tab-bar::-webkit-scrollbar { display: none; }
@@ -116,28 +147,25 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 8px 6px 12px;
-        border-radius: 8px 8px 0 0;
+        padding: 5px 8px 5px 12px;
+        border-radius: 999px;
         cursor: pointer;
         font-size: 11px;
         color: #7a7690;
         white-space: nowrap;
         max-width: 130px;
         min-width: 60px;
-        background: #1a1826;
-        border: 1px solid #262233;
-        border-bottom: 1px solid #15131d;
-        transition: background 0.15s, color 0.15s;
+        background: transparent;
+        border: 1px solid transparent;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
         user-select: none;
         position: relative;
         flex-shrink: 0;
       }
       .tab-item.active {
-        background: #111017;
+        background: rgba(129, 140, 248, 0.16);
         color: #ece9fb;
-        border-bottom-color: #111017;
-        box-shadow: inset 0 2px 0 #818cf8;
-        z-index: 1;
+        border-color: rgba(129, 140, 248, 0.4);
       }
       .tab-item:not(.active):hover {
         background: #211f2f;
@@ -164,69 +192,81 @@
       .tab-add {
         background: none;
         border: none;
-        color: #55506b;
+        color: #7a7690;
         font-size: 18px;
         line-height: 1;
         cursor: pointer;
-        padding: 4px 7px;
-        border-radius: 6px;
+        padding: 4px 9px;
+        border-radius: 999px;
         flex-shrink: 0;
         transition: color 0.15s, background 0.15s;
-        align-self: center;
-        margin-bottom: 1px;
       }
       .tab-add:hover { color: #ece9fb; background: #211f2f; }
 
       .browser-header {
-        padding: 10px 12px;
-        background: #1a1826;
-        border-bottom: 1px solid #262233;
+        padding: 8px 10px;
+        background: #16131f;
+        border-bottom: 1px solid #241f36;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .nav-group {
+        display: flex;
+        align-items: center;
+        gap: 1px;
+        background: #1e1a2c;
+        border-radius: 10px;
+        padding: 2px;
         flex-shrink: 0;
       }
       .url-input {
         flex: 1;
-        padding: 7px 12px;
-        background: #211f2f;
+        padding: 8px 14px;
+        background: #1e1a2c;
         color: #ece9fb;
-        border: 1px solid #35314a;
-        border-radius: 8px;
+        border: 1px solid transparent;
+        border-radius: 999px;
         font-family: monospace;
         font-size: 12px;
         outline: none;
-        transition: border-color 0.15s;
+        transition: border-color 0.15s, background 0.15s;
       }
-      .url-input:focus { border-color: #818cf8; }
+      .url-input:focus { border-color: #818cf8; background: #211f2f; }
 
       .nav-btn {
         background: transparent;
         border: none;
         color: #9a94b8;
-        font-size: 16px;
+        font-size: 15px;
         cursor: pointer;
-        padding: 4px 6px;
-        border-radius: 6px;
+        padding: 6px 8px;
+        border-radius: 8px;
         transition: color 0.2s, background 0.2s;
         line-height: 1;
         flex-shrink: 0;
       }
-      .nav-btn:hover { color: #ece9fb; background: #262233; }
+      .nav-btn:hover { color: #ece9fb; background: #2c2740; }
       .nav-btn:disabled { color: #423d59; cursor: default; background: none; }
 
       .close-btn {
-        background: transparent;
+        background: rgba(0,0,0,0.15);
         border: none;
-        color: #9a94b8;
-        font-size: 22px;
+        color: #f2f0ff;
+        font-size: 18px;
         cursor: pointer;
-        padding: 4px 8px;
-        border-radius: 6px;
-        transition: color 0.2s, background 0.2s;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        transition: background 0.2s;
         line-height: 1;
+        flex-shrink: 0;
       }
-      .close-btn:hover { color: #f87171; background: #262233; }
+      .close-btn:hover { background: rgba(0,0,0,0.32); }
 
       .view-container {
         flex: 1;
@@ -310,6 +350,26 @@
     const container = document.createElement('div');
     container.className = 'browser-container';
 
+    // Brand bar
+    const brandBar = document.createElement('div');
+    brandBar.className = 'brand-bar';
+    const brandIcon = document.createElement('img');
+    brandIcon.className = 'brand-icon';
+    brandIcon.src = chrome.runtime.getURL('icons/Sidekick-48.png');
+    brandIcon.alt = '';
+    const brandName = document.createElement('span');
+    brandName.className = 'brand-name';
+    brandName.textContent = 'Sidekick';
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-btn';
+    closeBtn.innerHTML = '&times;';
+
+    brandBar.appendChild(brandIcon);
+    brandBar.appendChild(brandName);
+    brandBar.appendChild(closeBtn);
+    container.appendChild(brandBar);
+
     // Tab bar
     const tabBar = document.createElement('div');
     tabBar.className = 'tab-bar';
@@ -323,6 +383,9 @@
     // URL / nav header
     const header = document.createElement('div');
     header.className = 'browser-header';
+
+    const navGroup = document.createElement('div');
+    navGroup.className = 'nav-group';
 
     const backBtn = document.createElement('button');
     backBtn.className = 'nav-btn';
@@ -339,20 +402,17 @@
     refreshBtn.title = 'Refresh';
     refreshBtn.innerHTML = '&#8635;';
 
+    navGroup.appendChild(backBtn);
+    navGroup.appendChild(forwardBtn);
+    navGroup.appendChild(refreshBtn);
+
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'url-input';
     input.placeholder = 'Search or enter address…';
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'close-btn';
-    closeBtn.innerHTML = '&times;';
-
-    header.appendChild(backBtn);
-    header.appendChild(forwardBtn);
-    header.appendChild(refreshBtn);
+    header.appendChild(navGroup);
     header.appendChild(input);
-    header.appendChild(closeBtn);
     container.appendChild(header);
 
     // View container (holds per-tab iframes)
