@@ -50,7 +50,7 @@
   window.addEventListener = function(type, listener, options) {
     if (type === 'blur') {
       const secureListener = function(event) {
-        const host = document.getElementById('ghost-browser-shield-host');
+        const host = document.getElementById('sidekick-browser-host');
         
         // If host exists, check its internal configuration state safely via shadowRoot
         if (host) {

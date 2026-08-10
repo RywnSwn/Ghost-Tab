@@ -2,11 +2,11 @@ const display = document.getElementById('keybindDisplay');
 const setBtn = document.getElementById('setBtn');
 const enabledToggle = document.getElementById('enabledToggle');
 
-chrome.storage.sync.get('ghostEnabled', ({ ghostEnabled }) => {
-  enabledToggle.checked = ghostEnabled !== false;
+chrome.storage.sync.get('sidekickEnabled', ({ sidekickEnabled }) => {
+  enabledToggle.checked = sidekickEnabled !== false;
 });
 enabledToggle.addEventListener('change', () => {
-  chrome.storage.sync.set({ ghostEnabled: enabledToggle.checked });
+  chrome.storage.sync.set({ sidekickEnabled: enabledToggle.checked });
 });
 
 let capturing = false;
@@ -23,8 +23,8 @@ function keybindToString(kb) {
 }
 
 function loadKeybind() {
-  chrome.storage.sync.get('ghostKeybind', ({ ghostKeybind }) => {
-    display.textContent = keybindToString(ghostKeybind);
+  chrome.storage.sync.get('sidekickKeybind', ({ sidekickKeybind }) => {
+    display.textContent = keybindToString(sidekickKeybind);
   });
 }
 
@@ -60,7 +60,7 @@ function onKeyDown(e) {
     meta:  e.metaKey,
   };
 
-  chrome.storage.sync.set({ ghostKeybind: kb }, () => {
+  chrome.storage.sync.set({ sidekickKeybind: kb }, () => {
     display.textContent = keybindToString(kb);
     stopCapture();
   });

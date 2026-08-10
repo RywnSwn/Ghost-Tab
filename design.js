@@ -1,8 +1,8 @@
 // design.js
 (function() {
-  function createGhostBrowserUI() {
+  function createSidekickBrowserUI() {
     const host = document.createElement('div');
-    host.id = 'ghost-browser-shield-host';
+    host.id = 'sidekick-browser-host';
     host.setAttribute('data-open', 'false');
     host.style.position = 'fixed';
     host.style.top = '0';
@@ -21,12 +21,12 @@
       .toggle-btn {
         position: fixed;
         right: 0;
-        width: 38px;
-        height: 44px;
-        background: rgba(80, 80, 80, 0.25);
-        border: 1px solid rgba(120, 120, 120, 0.2);
+        width: 40px;
+        height: 46px;
+        background: linear-gradient(160deg, rgba(99,102,241,0.35), rgba(67,56,202,0.35));
+        border: 1px solid rgba(129, 140, 248, 0.35);
         border-right: none;
-        border-radius: 18px 0 0 18px;
+        border-radius: 20px 0 0 20px;
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         cursor: grab;
@@ -35,7 +35,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: -3px 2px 10px rgba(0,0,0,0.35);
+        box-shadow: -3px 2px 12px rgba(30, 27, 75, 0.45);
         padding: 0;
         z-index: 2147483647;
         user-select: none;
@@ -49,8 +49,8 @@
         -webkit-user-drag: none;
       }
       .toggle-btn:hover {
-        background: rgba(80, 80, 80, 0.4);
-        box-shadow: -5px 2px 14px rgba(0,0,0,0.45);
+        background: linear-gradient(160deg, rgba(99,102,241,0.55), rgba(67,56,202,0.55));
+        box-shadow: -5px 2px 16px rgba(30, 27, 75, 0.55);
       }
       .toggle-btn.dragging {
         cursor: grabbing;
@@ -69,9 +69,11 @@
         top: 0;
         width: 420px;
         height: 100vh;
-        background: #0a0a0f;
-        border-left: 1px solid #1e1e2e;
-        box-shadow: -10px 0 30px rgba(0,0,0,0.6);
+        background: #111017;
+        border-left: 1px solid #262233;
+        border-radius: 14px 0 0 14px;
+        overflow: hidden;
+        box-shadow: -12px 0 34px rgba(10, 8, 20, 0.65);
         transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
@@ -93,19 +95,19 @@
       }
       .resize-handle:hover,
       .resize-handle.dragging {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(129, 140, 248, 0.18);
       }
 
       .tab-bar {
         display: flex;
         align-items: flex-end;
-        background: #0d0d15;
-        border-bottom: 1px solid #1e1e2e;
-        padding: 6px 6px 0;
-        gap: 2px;
+        background: #15131d;
+        border-bottom: 1px solid #262233;
+        padding: 8px 8px 0;
+        gap: 3px;
         overflow-x: auto;
         scrollbar-width: none;
-        min-height: 34px;
+        min-height: 36px;
         flex-shrink: 0;
       }
       .tab-bar::-webkit-scrollbar { display: none; }
@@ -113,32 +115,33 @@
       .tab-item {
         display: flex;
         align-items: center;
-        gap: 5px;
-        padding: 5px 8px 5px 10px;
-        border-radius: 5px 5px 0 0;
+        gap: 6px;
+        padding: 6px 8px 6px 12px;
+        border-radius: 8px 8px 0 0;
         cursor: pointer;
         font-size: 11px;
-        color: #666677;
+        color: #7a7690;
         white-space: nowrap;
         max-width: 130px;
         min-width: 60px;
-        background: #12121a;
-        border: 1px solid #1e1e2e;
-        border-bottom: 1px solid #0d0d15;
+        background: #1a1826;
+        border: 1px solid #262233;
+        border-bottom: 1px solid #15131d;
         transition: background 0.15s, color 0.15s;
         user-select: none;
         position: relative;
         flex-shrink: 0;
       }
       .tab-item.active {
-        background: #0a0a0f;
-        color: #e0e0f0;
-        border-bottom-color: #0a0a0f;
+        background: #111017;
+        color: #ece9fb;
+        border-bottom-color: #111017;
+        box-shadow: inset 0 2px 0 #818cf8;
         z-index: 1;
       }
       .tab-item:not(.active):hover {
-        background: #1a1a24;
-        color: #aaaacc;
+        background: #211f2f;
+        color: #b4affd;
       }
       .tab-label {
         flex: 1;
@@ -149,7 +152,7 @@
       .tab-close {
         background: none;
         border: none;
-        color: #444455;
+        color: #55506b;
         font-size: 14px;
         line-height: 1;
         cursor: pointer;
@@ -157,27 +160,27 @@
         flex-shrink: 0;
         transition: color 0.15s;
       }
-      .tab-close:hover { color: #ff5555; }
+      .tab-close:hover { color: #f87171; }
       .tab-add {
         background: none;
         border: none;
-        color: #444455;
+        color: #55506b;
         font-size: 18px;
         line-height: 1;
         cursor: pointer;
-        padding: 4px 6px;
-        border-radius: 4px;
+        padding: 4px 7px;
+        border-radius: 6px;
         flex-shrink: 0;
         transition: color 0.15s, background 0.15s;
         align-self: center;
         margin-bottom: 1px;
       }
-      .tab-add:hover { color: #e0e0f0; background: #1a1a24; }
+      .tab-add:hover { color: #ece9fb; background: #211f2f; }
 
       .browser-header {
         padding: 10px 12px;
-        background: #12121a;
-        border-bottom: 1px solid #1e1e2e;
+        background: #1a1826;
+        border-bottom: 1px solid #262233;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -186,41 +189,44 @@
       .url-input {
         flex: 1;
         padding: 7px 12px;
-        background: #1a1a24;
-        color: #e0e0f0;
-        border: 1px solid #2e2e3e;
-        border-radius: 6px;
+        background: #211f2f;
+        color: #ece9fb;
+        border: 1px solid #35314a;
+        border-radius: 8px;
         font-family: monospace;
         font-size: 12px;
         outline: none;
+        transition: border-color 0.15s;
       }
-      .url-input:focus { border-color: rgba(255, 255, 255, 0.4); }
+      .url-input:focus { border-color: #818cf8; }
 
       .nav-btn {
         background: transparent;
         border: none;
-        color: #888899;
+        color: #9a94b8;
         font-size: 16px;
         cursor: pointer;
         padding: 4px 6px;
-        transition: color 0.2s;
+        border-radius: 6px;
+        transition: color 0.2s, background 0.2s;
         line-height: 1;
         flex-shrink: 0;
       }
-      .nav-btn:hover { color: #e0e0f0; }
-      .nav-btn:disabled { color: #333344; cursor: default; }
+      .nav-btn:hover { color: #ece9fb; background: #262233; }
+      .nav-btn:disabled { color: #423d59; cursor: default; background: none; }
 
       .close-btn {
         background: transparent;
         border: none;
-        color: #888899;
-        font-size: 24px;
+        color: #9a94b8;
+        font-size: 22px;
         cursor: pointer;
         padding: 4px 8px;
-        transition: color 0.2s;
+        border-radius: 6px;
+        transition: color 0.2s, background 0.2s;
         line-height: 1;
       }
-      .close-btn:hover { color: #ff5555; }
+      .close-btn:hover { color: #f87171; background: #262233; }
 
       .view-container {
         flex: 1;
@@ -255,13 +261,13 @@
     const btn = document.createElement('button');
     btn.className = 'toggle-btn';
     const btnIcon = document.createElement('img');
-    btnIcon.src = chrome.runtime.getURL('icons/Hexagon-48.png');
+    btnIcon.src = chrome.runtime.getURL('icons/Sidekick-48.png');
     btnIcon.alt = '';
     btn.appendChild(btnIcon);
     shadow.appendChild(btn);
 
     // Draggable vertical position
-    const SAVED_TOP_KEY = 'ghostBrowserBtnTop';
+    const SAVED_TOP_KEY = 'sidekickBtnTop';
     function clampTop(y) {
       return Math.max(8, Math.min(window.innerHeight - 52, y));
     }
@@ -295,7 +301,7 @@
         document.removeEventListener('mousemove', onMove, true);
         document.removeEventListener('mouseup', onUp, true);
         // Only open browser if it was a click (not a drag)
-        if (delta < 5) btn.dispatchEvent(new CustomEvent('ghost-click'));
+        if (delta < 5) btn.dispatchEvent(new CustomEvent('sidekick-click'));
       }
       document.addEventListener('mousemove', onMove, true);
       document.addEventListener('mouseup', onUp, true);
@@ -365,8 +371,8 @@
     shadow.appendChild(container);
 
     const MIN_W = 240;
-    const MAX_W = Math.round(window.screen.width * 0.9);
-    let panelWidth = parseInt(localStorage.getItem('ghostBrowserWidth') || '420', 10);
+    const MAX_W = Math.round(window.innerWidth * 0.9);
+    let panelWidth = parseInt(localStorage.getItem('sidekickWidth') || '420', 10);
 
     function applyWidth(w) {
       panelWidth = Math.min(MAX_W, Math.max(MIN_W, w));
@@ -390,7 +396,7 @@
       function onUp() {
         resizeHandle.classList.remove('dragging');
         container.classList.remove('resizing');
-        localStorage.setItem('ghostBrowserWidth', panelWidth);
+        localStorage.setItem('sidekickWidth', panelWidth);
         document.removeEventListener('mousemove', onMove, true);
         document.removeEventListener('mouseup', onUp, true);
       }
@@ -423,5 +429,5 @@
     };
   }
 
-  window.__createGhostBrowserUI = createGhostBrowserUI;
+  window.__createSidekickBrowserUI = createSidekickBrowserUI;
 })();

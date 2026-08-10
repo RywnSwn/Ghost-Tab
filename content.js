@@ -1,10 +1,10 @@
 // content.js
 (function() {
-  if (window.__ghostBrowserLoaded) return;
-  window.__ghostBrowserLoaded = true;
+  if (window.__sidekickBrowserLoaded) return;
+  window.__sidekickBrowserLoaded = true;
 
-  if (!window.__createGhostBrowserUI) return;
-  const ui = window.__createGhostBrowserUI();
+  if (!window.__createSidekickBrowserUI) return;
+  const ui = window.__createSidekickBrowserUI();
 
   // --- Tab management ---
   const tabs = [];
@@ -93,7 +93,7 @@
   createTab();
 
   // --- UI event listeners ---
-  ui.btn.addEventListener('ghost-click', (e) => {
+  ui.btn.addEventListener('sidekick-click', (e) => {
     ui.setBrowserVisibility(true);
   });
 
@@ -136,18 +136,18 @@
   ui.container.addEventListener('mousemove', (e) => e.stopPropagation());
 
   window.addEventListener('dblclick', (e) => {
-    const host = document.getElementById('ghost-browser-shield-host');
+    const host = document.getElementById('sidekick-browser-host');
     if (host && host.shadowRoot && host.shadowRoot.contains(e.target)) return;
     ui.setBrowserVisibility(false);
   });
 
   // Enabled toggle
-  chrome.storage.sync.get('ghostEnabled', ({ ghostEnabled }) => {
-    if (ghostEnabled === false) ui.btn.classList.add('hidden');
+  chrome.storage.sync.get('sidekickEnabled', ({ sidekickEnabled }) => {
+    if (sidekickEnabled === false) ui.btn.classList.add('hidden');
   });
   chrome.storage.onChanged.addListener((changes) => {
-    if (changes.ghostEnabled) {
-      const on = changes.ghostEnabled.newValue !== false;
+    if (changes.sidekickEnabled) {
+      const on = changes.sidekickEnabled.newValue !== false;
       if (on) {
         ui.btn.classList.remove('hidden');
       } else {
@@ -159,16 +159,16 @@
 
   // Global keybind toggle
   let currentKeybind = null;
-  chrome.storage.sync.get('ghostKeybind', ({ ghostKeybind }) => {
-    currentKeybind = ghostKeybind || null;
+  chrome.storage.sync.get('sidekickKeybind', ({ sidekickKeybind }) => {
+    currentKeybind = sidekickKeybind || null;
   });
   chrome.storage.onChanged.addListener((changes) => {
-    if (changes.ghostKeybind) currentKeybind = changes.ghostKeybind.newValue;
+    if (changes.sidekickKeybind) currentKeybind = changes.sidekickKeybind.newValue;
   });
   window.addEventListener('keydown', (e) => {
     const kb = currentKeybind;
     if (!kb || !kb.key) return;
-    const host = document.getElementById('ghost-browser-shield-host');
+    const host = document.getElementById('sidekick-browser-host');
     if (host && host.shadowRoot && host.shadowRoot.contains(e.target)) return;
     if (
       e.key === kb.key &&

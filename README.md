@@ -1,4 +1,4 @@
-# Ghost Sandbox Browser
+# Sidekick Browser
 
 A Chrome extension that opens a resizable browser panel inside any page you're visiting.
 

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Ghost Sandbox Browser",
-  "description": "A hidden side-panel browser that slides into any webpage. Browse, search, or reference content without leaving your current tab.",
-  "version": "1.2",
+  "name": "Sidekick Browser",
+  "description": "A side-panel browser that slides into any webpage. Browse, search, or reference content without leaving your current tab.",
+  "version": "1.3",
   "permissions": [
     "activeTab",
     "scripting",
@@ -17,15 +17,15 @@
     "service_worker": "background.js"
   },
   "icons": {
-    "16": "icons/Hexagon-16.png",
-    "48": "icons/Hexagon-48.png",
-    "128": "icons/Hexagon-128.png"
+    "16": "icons/Sidekick-16.png",
+    "48": "icons/Sidekick-48.png",
+    "128": "icons/Sidekick-128.png"
   },
   "action": {
     "default_icon": {
-      "16": "icons/Hexagon-16.png",
-      "48": "icons/Hexagon-48.png",
-      "128": "icons/Hexagon-128.png"
+      "16": "icons/Sidekick-16.png",
+      "48": "icons/Sidekick-48.png",
+      "128": "icons/Sidekick-128.png"
     },
     "default_popup": "popup.html"
   },
