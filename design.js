@@ -1,4 +1,5 @@
 // design.js
+// Builds the panel UI inside a Shadow DOM. Styling is intentionally plain.
 (function() {
   function createGhostBrowserUI() {
     const host = document.createElement('div');
@@ -16,52 +17,38 @@
 
     const style = document.createElement('style');
     style.textContent = `
-      .tab-track { display: none; }
+      * { box-sizing: border-box; }
 
       .toggle-btn {
         position: fixed;
         right: 0;
-        width: 38px;
-        height: 44px;
-        background: rgba(80, 80, 80, 0.25);
-        border: 1px solid rgba(120, 120, 120, 0.2);
+        width: 32px;
+        height: 56px;
+        background: #dddddd;
+        border: 1px solid #999999;
         border-right: none;
-        border-radius: 18px 0 0 18px;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        cursor: grab;
-        opacity: 1;
-        transition: box-shadow 0.22s, background 0.22s;
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: -3px 2px 10px rgba(0,0,0,0.35);
         padding: 0;
         z-index: 2147483647;
         user-select: none;
-        -webkit-user-drag: none;
-      }
-      .toggle-btn img {
-        width: 22px;
-        height: 22px;
-        pointer-events: none;
-        user-select: none;
-        -webkit-user-drag: none;
-      }
-      .toggle-btn:hover {
-        background: rgba(80, 80, 80, 0.4);
-        box-shadow: -5px 2px 14px rgba(0,0,0,0.45);
-      }
-      .toggle-btn.dragging {
-        cursor: grabbing;
-        transition: none;
-      }
-      .toggle-btn.hidden {
         opacity: 0;
         pointer-events: none;
-        transform: translateX(50px);
-        transition: opacity 0.2s, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+        transition: opacity 0.15s;
       }
+      .toggle-btn.near {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .toggle-btn img {
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+      }
+      .toggle-btn.dragging { cursor: grabbing; }
+      .toggle-btn.hidden { display: none; }
 
       .browser-container {
         position: fixed;
@@ -69,158 +56,86 @@
         top: 0;
         width: 420px;
         height: 100vh;
-        background: #0a0a0f;
-        border-left: 1px solid #1e1e2e;
-        box-shadow: -10px 0 30px rgba(0,0,0,0.6);
-        transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        background: #ffffff;
+        border-left: 1px solid #999999;
         display: flex;
         flex-direction: column;
+        font-family: sans-serif;
+        font-size: 13px;
+        color: #000000;
       }
       .browser-container.open { right: 0; }
-      .browser-container.closing { transition: right 0.15s ease-in; }
-      .browser-container.resizing { transition: none; user-select: none; }
+      .browser-container.resizing { user-select: none; }
 
       .resize-handle {
         position: absolute;
-        left: -4px;
+        left: 0;
         top: 0;
-        width: 8px;
+        width: 6px;
         height: 100%;
         cursor: ew-resize;
         z-index: 10;
-        background: transparent;
-        transition: background 0.2s;
-      }
-      .resize-handle:hover,
-      .resize-handle.dragging {
-        background: rgba(255, 255, 255, 0.08);
       }
 
       .tab-bar {
         display: flex;
-        align-items: flex-end;
-        background: #0d0d15;
-        border-bottom: 1px solid #1e1e2e;
-        padding: 6px 6px 0;
-        gap: 2px;
+        align-items: center;
+        gap: 4px;
+        padding: 4px;
+        background: #eeeeee;
+        border-bottom: 1px solid #cccccc;
         overflow-x: auto;
-        scrollbar-width: none;
-        min-height: 34px;
-        flex-shrink: 0;
       }
-      .tab-bar::-webkit-scrollbar { display: none; }
-
       .tab-item {
         display: flex;
         align-items: center;
-        gap: 5px;
-        padding: 5px 8px 5px 10px;
-        border-radius: 5px 5px 0 0;
+        gap: 4px;
+        padding: 3px 6px;
+        background: #ffffff;
+        border: 1px solid #cccccc;
         cursor: pointer;
-        font-size: 11px;
-        color: #666677;
         white-space: nowrap;
-        max-width: 130px;
-        min-width: 60px;
-        background: #12121a;
-        border: 1px solid #1e1e2e;
-        border-bottom: 1px solid #0d0d15;
-        transition: background 0.15s, color 0.15s;
-        user-select: none;
-        position: relative;
-        flex-shrink: 0;
+        max-width: 140px;
+        min-width: 50px;
       }
-      .tab-item.active {
-        background: #0a0a0f;
-        color: #e0e0f0;
-        border-bottom-color: #0a0a0f;
-        z-index: 1;
-      }
-      .tab-item:not(.active):hover {
-        background: #1a1a24;
-        color: #aaaacc;
-      }
+      .tab-item.active { background: #cfe0f0; }
       .tab-label {
         flex: 1;
         overflow: hidden;
         text-overflow: ellipsis;
-        min-width: 0;
       }
       .tab-close {
-        background: none;
         border: none;
-        color: #444455;
-        font-size: 14px;
-        line-height: 1;
+        background: none;
         cursor: pointer;
-        padding: 0;
-        flex-shrink: 0;
-        transition: color 0.15s;
+        padding: 0 2px;
       }
-      .tab-close:hover { color: #ff5555; }
       .tab-add {
-        background: none;
-        border: none;
-        color: #444455;
-        font-size: 18px;
-        line-height: 1;
+        border: 1px solid #cccccc;
+        background: #ffffff;
         cursor: pointer;
-        padding: 4px 6px;
-        border-radius: 4px;
-        flex-shrink: 0;
-        transition: color 0.15s, background 0.15s;
-        align-self: center;
-        margin-bottom: 1px;
+        padding: 2px 8px;
       }
-      .tab-add:hover { color: #e0e0f0; background: #1a1a24; }
 
       .browser-header {
-        padding: 10px 12px;
-        background: #12121a;
-        border-bottom: 1px solid #1e1e2e;
         display: flex;
         align-items: center;
-        gap: 8px;
-        flex-shrink: 0;
+        gap: 4px;
+        padding: 4px;
+        border-bottom: 1px solid #cccccc;
+      }
+      .nav-btn {
+        cursor: pointer;
+        padding: 2px 6px;
       }
       .url-input {
         flex: 1;
-        padding: 7px 12px;
-        background: #1a1a24;
-        color: #e0e0f0;
-        border: 1px solid #2e2e3e;
-        border-radius: 6px;
-        font-family: monospace;
-        font-size: 12px;
-        outline: none;
-      }
-      .url-input:focus { border-color: rgba(255, 255, 255, 0.4); }
-
-      .nav-btn {
-        background: transparent;
-        border: none;
-        color: #888899;
-        font-size: 16px;
-        cursor: pointer;
         padding: 4px 6px;
-        transition: color 0.2s;
-        line-height: 1;
-        flex-shrink: 0;
       }
-      .nav-btn:hover { color: #e0e0f0; }
-      .nav-btn:disabled { color: #333344; cursor: default; }
-
       .close-btn {
-        background: transparent;
-        border: none;
-        color: #888899;
-        font-size: 24px;
         cursor: pointer;
-        padding: 4px 8px;
-        transition: color 0.2s;
-        line-height: 1;
+        padding: 2px 8px;
       }
-      .close-btn:hover { color: #ff5555; }
 
       .view-container {
         flex: 1;
@@ -248,10 +163,6 @@
     `;
     shadow.appendChild(style);
 
-    const track = document.createElement('div');
-    track.className = 'tab-track';
-    shadow.appendChild(track);
-
     const btn = document.createElement('button');
     btn.className = 'toggle-btn';
     const btnIcon = document.createElement('img');
@@ -260,18 +171,16 @@
     btn.appendChild(btnIcon);
     shadow.appendChild(btn);
 
-    // Draggable vertical position
+    // Draggable vertical position for the toggle tab.
     const SAVED_TOP_KEY = 'ghostBrowserBtnTop';
     function clampTop(y) {
-      return Math.max(8, Math.min(window.innerHeight - 52, y));
+      return Math.max(8, Math.min(window.innerHeight - 64, y));
     }
     function applyBtnTop(y) {
-      const t = clampTop(y) + 'px';
-      btn.style.top = t;
-      track.style.top = t;
+      btn.style.top = clampTop(y) + 'px';
     }
     const savedTop = parseFloat(localStorage.getItem(SAVED_TOP_KEY));
-    applyBtnTop(isNaN(savedTop) ? Math.round(window.innerHeight / 2 - 22) : savedTop);
+    applyBtnTop(isNaN(savedTop) ? Math.round(window.innerHeight / 2 - 28) : savedTop);
 
     let dragState = null;
     btn.addEventListener('mousedown', (e) => {
@@ -283,8 +192,7 @@
 
       function onMove(e) {
         if (!dragState) return;
-        const newTop = clampTop(dragState.startTop + (e.clientY - dragState.startY));
-        btn.style.top = newTop + 'px';
+        btn.style.top = clampTop(dragState.startTop + (e.clientY - dragState.startY)) + 'px';
       }
       function onUp(e) {
         if (!dragState) return;
@@ -294,12 +202,19 @@
         dragState = null;
         document.removeEventListener('mousemove', onMove, true);
         document.removeEventListener('mouseup', onUp, true);
-        // Only open browser if it was a click (not a drag)
         if (delta < 5) btn.dispatchEvent(new CustomEvent('ghost-click'));
       }
       document.addEventListener('mousemove', onMove, true);
       document.addEventListener('mouseup', onUp, true);
     });
+
+    // Reveal the toggle tab only when the cursor comes near the right edge.
+    const REVEAL_ZONE = 60;
+    document.addEventListener('mousemove', (e) => {
+      if (btn.classList.contains('dragging')) return;
+      const near = (window.innerWidth - e.clientX) <= REVEAL_ZONE;
+      btn.classList.toggle('near', near);
+    }, true);
 
     const container = document.createElement('div');
     container.className = 'browser-container';
@@ -320,27 +235,27 @@
 
     const backBtn = document.createElement('button');
     backBtn.className = 'nav-btn';
-    backBtn.title = 'Go back';
-    backBtn.innerHTML = '&#8592;';
+    backBtn.title = 'Back';
+    backBtn.textContent = '<';
 
     const forwardBtn = document.createElement('button');
     forwardBtn.className = 'nav-btn';
-    forwardBtn.title = 'Go forward';
-    forwardBtn.innerHTML = '&#8594;';
+    forwardBtn.title = 'Forward';
+    forwardBtn.textContent = '>';
 
     const refreshBtn = document.createElement('button');
     refreshBtn.className = 'nav-btn';
     refreshBtn.title = 'Refresh';
-    refreshBtn.innerHTML = '&#8635;';
+    refreshBtn.textContent = 'R';
 
     const input = document.createElement('input');
     input.type = 'text';
     input.className = 'url-input';
-    input.placeholder = 'Search or enter address…';
+    input.placeholder = 'Search or enter address';
 
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-btn';
-    closeBtn.innerHTML = '&times;';
+    closeBtn.textContent = 'X';
 
     header.appendChild(backBtn);
     header.appendChild(forwardBtn);
@@ -375,20 +290,17 @@
         host.style.width = panelWidth + 'px';
       }
     }
-
     applyWidth(panelWidth);
 
     resizeHandle.addEventListener('mousedown', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      resizeHandle.classList.add('dragging');
       container.classList.add('resizing');
       const startX = e.clientX;
       const startW = panelWidth;
 
       function onMove(e) { applyWidth(startW + (startX - e.clientX)); }
       function onUp() {
-        resizeHandle.classList.remove('dragging');
         container.classList.remove('resizing');
         localStorage.setItem('ghostBrowserWidth', panelWidth);
         document.removeEventListener('mousemove', onMove, true);
@@ -405,14 +317,10 @@
         host.setAttribute('data-open', 'true');
         host.style.width = panelWidth + 'px';
       } else {
-        container.classList.add('closing');
         container.classList.remove('open');
         btn.classList.remove('hidden');
         host.setAttribute('data-open', 'false');
-        setTimeout(() => {
-          container.classList.remove('closing');
-          host.style.width = '0';
-        }, 150);
+        host.style.width = '0';
       }
     }
 

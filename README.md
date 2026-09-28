@@ -4,9 +4,15 @@ A Chrome extension that opens a resizable browser panel inside any page you're v
 
 ## How it works
 
-A small toggle tab lives on the right edge of every page. Click it and a sidebar slides open with a full iframe browser. Type a URL or search term and hit Enter. Double-click anywhere on the main page to close it.
+A small toggle tab lives on the right edge of every page. Click it and a sidebar slides open with a full iframe browser. Type a URL or search term and hit Enter. Double-click anywhere on the main page to close it. Drag the tab up or down to move it, and drag the left edge of the panel to resize it.
 
-It strips `X-Frame-Options` and `Content-Security-Policy` headers off iframe responses, so most sites that normally block embedding will load inside the panel.
+To load sites that normally refuse embedding, the extension:
+
+1. Strips framing-related response headers (`X-Frame-Options`, `Content-Security-Policy`, `Cross-Origin-*`, `Permissions-Policy`) off iframe responses.
+2. Rewrites the iframe request's `Sec-Fetch-*` headers so the server sees a normal top-level navigation instead of an iframe load.
+3. Spoofs `window.top` / `window.parent` / `frameElement` and strips `frame-ancestors` from meta CSP tags **inside the embedded frame**, so the site's own framebusting scripts think they are running top-level.
+
+Some sites (Google accounts, YouTube, banking) enforce embedding rules the browser can't override from the page, so they may still refuse to load.
 
 ## Setup
 
@@ -21,14 +27,14 @@ Open the popup, click Set, press a key combo. Saves to `chrome.storage.sync` and
 
 ## Files
 
-`manifest.json` configures the extension (Manifest V3).
+`manifest.json` configures the extension (Manifest V3). `bypass.js` is injected into **all frames** so the spoofing runs inside embedded sites; `design.js` and `content.js` run only in the top frame.
 
-`background.js` strips the X-Frame-Options and CSP headers on install using declarativeNetRequest.
+`background.js` registers the declarativeNetRequest rules that strip framing headers and rewrite the request headers.
 
-`bypass.js` intercepts blur events at the window level so host-page focus-detection scripts don't trigger while the panel is open. Runs in the MAIN world at document_start.
+`bypass.js` runs in the MAIN world at document_start. Inside embedded frames it spoofs iframe-detection APIs; on the host page it swallows blur events while the panel is open.
 
-`design.js` builds all the UI inside a Shadow DOM: the toggle tab, sidebar panel, URL bar, nav buttons, and the resize handle.
+`design.js` builds the UI inside a Shadow DOM: the toggle tab, sidebar panel, URL bar, nav buttons, tab bar, and resize handle.
 
-`content.js` connects all the event listeners, a manual navigation history stack (cross-origin iframes block `contentWindow.history`), and the keybind handler.
+`content.js` wires up the event listeners, tab management, and a manual navigation history stack (cross-origin iframes block `contentWindow.history`).
 
-`popup.html` and `popup.js` handle the popup UI where you set the keybind.
+`popup.html` and `popup.js` handle the popup UI where you set the keybind and toggle the side tab.

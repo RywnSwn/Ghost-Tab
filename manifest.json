@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Ghost Sandbox Browser",
-  "description": "A hidden side-panel browser that slides into any webpage. Browse, search, or reference content without leaving your current tab.",
-  "version": "1.2",
+  "description": "A side-panel browser that slides into any webpage. Browse, search, or reference content without leaving your current tab.",
+  "version": "2.0",
   "permissions": [
     "activeTab",
     "scripting",
@@ -40,12 +40,14 @@
       "matches": ["<all_urls>"],
       "js": ["bypass.js"],
       "world": "MAIN",
-      "run_at": "document_start"
+      "run_at": "document_start",
+      "all_frames": true
     },
     {
       "matches": ["<all_urls>"],
       "js": ["design.js", "content.js"],
-      "world": "ISOLATED"
+      "world": "ISOLATED",
+      "all_frames": false
     }
   ]
 }
